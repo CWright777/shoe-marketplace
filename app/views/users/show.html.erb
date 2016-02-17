@@ -1,7 +1,11 @@
 <a href="/shoes">Go to All Shoes</a>
 
 <h1>Hi <%=@user.first_name%></h1>
-
+<% if flash[:errors] %>
+  <% flash[:errors].each do |f| %>
+    <%= f %><br>
+  <% end %>
+<% end %>
 <h2>Sell Product</h2>
 <form action="/shoes" method="post">
   <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">

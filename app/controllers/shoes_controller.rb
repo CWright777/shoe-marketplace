@@ -5,7 +5,10 @@ class ShoesController < ApplicationController
   end
 
   def create
-    Shoe.create(shoe_params)
+    @shoe = Shoe.new(shoe_params)
+    unless @shoe.save
+      flash[:errors] = @shoe.errors.full_messages
+    end
     redirect_to :back
   end
 
