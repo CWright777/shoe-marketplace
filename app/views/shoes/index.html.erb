@@ -1,0 +1,28 @@
+<a href="/users/<%=session[:user_id]%>">Go to Dashboard</a>
+<h1>Hi, <%=@user.first_name%></h1>
+<h1>All Shoes</h1>
+<table>
+	<tr>
+		<th>Shoe</th>
+		<th>Seller</th>
+		<th>Date Posted</th>
+		<th>Amount</th>
+		<th>Action</th>
+	</tr>
+	<% @shoes.each do |s| %>
+	<tr>
+		<th><%=s.name%></th>
+		<th><%=s.user.first_name%> <%=s.user.last_name%></th>
+		<th><%=s.created_at.in_time_zone("Pacific Time (US & Canada)").strftime("%b %d, %Y")%></th>
+		<th>$<%=number_with_precision(s.price,precision: 2)%></th>
+		<th>
+			<form action="/shoes/<%=s[:id] %>" method="post">
+				<input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+				<input type='hidden' name='_method' value='patch'>
+				<input type='submit' value='Buy'>
+			</form>
+		</th>
+	</tr>
+	<% end %>
+</table>
+

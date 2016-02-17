@@ -1,0 +1,72 @@
+<a href="/shoes">Go to All Shoes</a>
+
+<h1>Hi <%=@user.first_name%></h1>
+
+<h2>Sell Product</h2>
+<form action="/shoes" method="post">
+  <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+  <p>Name: <input type="text" name="shoe[name]"></p>
+  <p>Price: <input type="text" name="shoe[price]"></p>
+  <input type='submit' value='Sell'>
+</form>
+
+<h2>Your products that are not sold yet</h2>
+<table>
+	<tr>
+		<th>Product</th>
+		<th>Date Posted</th>
+		<th>Amount</th>
+		<th>Action</th>
+	</tr>
+	<% @non_purchased.each do |n| %>
+	<tr>
+		<th><%=n.name%></th>
+		<th><%=n.created_at.in_time_zone("Pacific Time (US & Canada)").strftime("%b %d, %Y")%></th>
+		<th><%=n.price%></th>
+		<th>
+			<form action="/shoes/<%=n[:id] %>" method="post">
+				<input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+				<input type='hidden' name='_method' value='delete'>
+				<input type='submit' value='Remove'>
+			</form>
+		</th>
+	</tr>
+	<% end %>
+</table>
+Total: $<%=  number_with_precision((@non_purchased.map(&:price).reduce(:+)),precision: 2) || 0%>
+<h2>Sales</h2>
+<table>
+	<tr>
+		<th>Product</th>
+		<th>Date Bought</th>
+		<th>Buyer</th>
+		<th>Amount</th>
+	</tr>
+	<% @purchased.each do |p|%>
+	<tr>
+		<th><%=p.name%></th>
+		<th><%=p.updated_at.in_time_zone("Pacific Time (US & Canada)").strftime("%b %d, %Y")%></th>
+		<th><%=User.find(p.buyer_id).first_name%> <%=User.find(p.buyer_id).last_name%></th>
+		<th><%=p.price%></th>
+	</tr>
+	<% end %>
+</table>
+Total: $<%= number_with_precision((@purchased.map(&:price).reduce(:+)),precision: 2) || 0%>
+<h2>Purchases</h2>
+<table>
+	<tr>
+		<th>Product</th>
+		<th>Date Bought</th>
+		<th>Seller</th>
+		<th>Amount</th>
+	</tr>
+	<% @purchases.each do |pur|%>
+	<tr>
+		<th><%=pur.name%></th>
+		<th><%=pur.updated_at.in_time_zone("Pacific Time (US & Canada)").strftime("%b %d, %Y")%></th>
+		<th><%=pur.user.first_name%> <%=pur.user.last_name%></th>
+		<th><%=pur.price%></th>
+	</tr>
+	<% end %>
+</table>
+Total: $<%= number_with_precision((@purchases.map(&:price).reduce(:+)),precision: 2) || 0%>
